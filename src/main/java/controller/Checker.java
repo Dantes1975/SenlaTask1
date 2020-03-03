@@ -8,45 +8,52 @@ import java.util.List;
 
 public class Checker {
 
-    public double getWeightOfItems(List<Item> items) {
-        double weightOfItems = 0;
+    public int getWeightOfItems(List<Item> items) {
+        int weightOfItems = 0;
         for (Item item : items) {
             weightOfItems += item.getWeight();
         }
         return weightOfItems;
     }
 
-    public double getCostOfItems(List<Item> items) {
-        double costOfItems = 0;
+    public int getCostOfItems(List<Item> items) {
+        int costOfItems = 0;
         for (Item item : items) {
             costOfItems += item.getCost();
         }
         return costOfItems;
     }
 
-    private void checkItems(Backpack backpack, List<Item> items) {
-        if (backpack.getItems() == null) {
-            if (getWeightOfItems(items) <= backpack.getMaxWeight()) {
-                backpack.setItems(items);
-                backpack.setBestCost(getCostOfItems(items));
-            } else {
-                if (getWeightOfItems(items) <= backpack.getMaxWeight() && getCostOfItems(items) >=backpack.getBestCost()){
-                    backpack.setItems(items);
-                    backpack.setBestCost(getCostOfItems(items));
+    public Backpack packBackpack(Backpack backpack, List<Item> items) {
+        int index = items.size();
+        int[] weights = new int[index + 1];
+        int[] values = new int[index + 1];
+        for (int i = 1; i < weights.length; i++) {
+            weights[i] = items.get(i - 1).getWeight();
+            values[i] = items.get(i - 1).getCost();
+        }
+        int[][] backPackTable = new int[index + 1][backpack.getMaxWeight() + 1];
+        List<Item> takeItems = new ArrayList<>();
+
+        for (int i = 1; i <= items.size(); i++) {
+            for (int j = 1; j <= backpack.getMaxWeight(); j++) {
+                int itemNotToTake = backPackTable[i - 1][j];
+                int itemToTake = 0;
+                if (weights[i] <= j) {
+                    itemToTake = values[i] + backPackTable[i - 1][j - weights[i]];
                 }
+                backPackTable[i][j] = Math.max(itemNotToTake, itemToTake);
             }
         }
+        for (int n = index, w = backpack.getMaxWeight(); n > 0; n--) {
+            if (backPackTable[n][w] != 0 && backPackTable[n][w] != backPackTable[n - 1][w]) {
+                takeItems.add(items.get(n - 1));
+                w -= weights[n];
+            }
+        }
+        backpack.setItems(takeItems);
+        return backpack;
     }
 
-    public Backpack checkAllSets(Backpack backpack, List<Item> items){
-        if(items.size() > 0)
-        checkItems(backpack, items);
-            for (int i = 0; i < items.size(); i++) {
-                List<Item> newItems = new ArrayList<>(items);
-                newItems.remove(i);
-                checkAllSets(backpack, newItems);
-            }
-            return backpack;
-        }
 
 }

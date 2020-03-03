@@ -11,9 +11,22 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Backpack {
+    private int maxWeight;
     private List<Item> items;
-    private double maxWeight;
-    private double bestCost;
 
+    public int getTotalCostOfItems() {
+        int totalCost = 0;
+        for (Item it : items) {
+            totalCost += it.getCost();
+        }
+        return totalCost;
+    }
 
+    public int getTotalWeightOfItems() {
+        int totalWeight = 0;
+        for (Item it : items) {
+            totalWeight += it.getWeight();
+        }
+        return totalWeight;
+    }
 }

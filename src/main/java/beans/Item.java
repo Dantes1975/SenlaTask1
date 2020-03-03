@@ -7,15 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Item implements Comparable<Item> {
+public class Item {
     private String name;
-    private double weight;
-    private double cost;
+    private int weight;
+    private int cost;
 
 
-
-    @Override
-    public int compareTo(Item o) {
-        return Double.compare(cost/weight, o.getCost()/o.getWeight());
-    }
 }
